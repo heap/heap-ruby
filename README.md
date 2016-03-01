@@ -81,14 +81,14 @@ end
 The properties are optional.
 
 ```ruby
-Heap.track 'user-handle', 'event-name', property: 'value'
+Heap.track 'user-identity', 'event-name', property: 'value'
 ```
 
 [Add properties](https://heapanalytics.com/docs/server-side#identify) to a
 user.
 
 ```ruby
-Heap.add_user_properties 'user-handle', plan: 'premium1'
+Heap.add_user_properties 'user-identity', plan: 'premium1'
 ```
 
 If the global API client instance stored in `Heap` is not a good fit for your
@@ -96,7 +96,7 @@ application's architecture, create your own client instances.
 
 ```ruby
 heap_client = Heap.new app_id: 'YOUR_APP_ID'
-heap_client.track 'user-handle', 'event-name', property: 'value'
+heap_client.track 'user-identity', 'event-name', property: 'value'
 ```
 
 
