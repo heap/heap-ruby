@@ -39,6 +39,17 @@ class ClientTrackTest < MiniTest::Test
     assert_equal 'Event name too long', exception.message
   end
 
+  def test_add_user_properties_with_long_identity
+    long_identity = 'A' * 256
+
+    exception = assert_raises ArgumentError do
+      @heap.track 'some-event', long_identity
+    end
+    assert_equal ArgumentError, exception.class
+    assert_equal "Identity field too long; " +
+        '256 is above the 255-character limit', exception.message
+  end
+
   def test_track_with_invalid_property_object
     exception = assert_raises ArgumentError do
       @heap.track 'test_track_with_long_property_name', 'test-identity', false
@@ -68,6 +79,17 @@ class ClientTrackTest < MiniTest::Test
     assert_equal ArgumentError, exception.class
     assert_equal "Property long_value_name value \"#{long_value}\" too " +
         'long; 1025 is above the 1024-character limit', exception.message
+  end
+
+  def test_track_with_long_symbol_identity
+    long_identity = ('A' * 256).to_sym
+
+    exception = assert_raises ArgumentError do
+      @heap.track 'some-event', long_identity
+    end
+    assert_equal ArgumentError, exception.class
+    assert_equal "Identity field too long; " +
+        '256 is above the 255-character limit', exception.message
   end
 
   def test_track_with_long_symbol_property_value

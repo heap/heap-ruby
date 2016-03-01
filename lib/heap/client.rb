@@ -81,6 +81,7 @@ class HeapAPI::Client
   # @see https://heapanalytics.com/docs/server-side#identify
   def add_user_properties(identity, properties)
     ensure_valid_app_id!
+    ensure_valid_identity! identity
     ensure_valid_properties! properties
 
     body = {
@@ -109,6 +110,7 @@ class HeapAPI::Client
 
     event_name = event.to_s
     ensure_valid_event_name! event_name
+    ensure_valid_identity! identity
 
     body = {
       :app_id => @app_id,

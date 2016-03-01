@@ -23,6 +23,25 @@ class HeapAPI::Client
   end
   private :ensure_valid_event_name!
 
+  # Validates identity, making sure it is a valid string or integer.
+  #
+  # @param [String|Integer] identity
+  # @raise ArgumentError if identity is of an invalid type or too long.
+  # @return [HeapAPI::Client] self
+  def ensure_valid_identity!(identity)
+    if identity.kind_of?(String) || identity.kind_of?(Symbol)
+      if identity.to_s.length > 255
+        raise ArgumentError, "Identity field too long; " +
+            "#{identity.to_s.length} is above the 255-character limit"
+      end
+    elsif identity.kind_of? Integer
+    else
+      raise ArgumentError,
+        "Unsupported type for identity value #{identity.inspect}"
+    end
+  end
+  private :ensure_valid_identity!
+
   # Validates a bag of properties sent to a Heap server-side API.
   #
   # @param [Hash<String, String|Number>] properties key-value property bag;

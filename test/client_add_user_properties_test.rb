@@ -31,6 +31,17 @@ class ClientAddUserPropertiesTest < MiniTest::Test
         exception.message
   end
 
+  def test_add_user_properties_with_long_identity
+    long_identity = 'A' * 256
+
+    exception = assert_raises ArgumentError do
+      @heap.add_user_properties long_identity, 'key' => 'value'
+    end
+    assert_equal ArgumentError, exception.class
+    assert_equal "Identity field too long; " +
+        '256 is above the 255-character limit', exception.message
+  end
+
   def test_add_user_properties_with_long_property_name
     long_name = 'A' * 1025
 
@@ -51,6 +62,17 @@ class ClientAddUserPropertiesTest < MiniTest::Test
     assert_equal ArgumentError, exception.class
     assert_equal "Property long_value_name value \"#{long_value}\" too " +
         'long; 1025 is above the 1024-character limit', exception.message
+  end
+
+  def test_add_user_properties_with_long_identity
+    long_identity = ('A' * 256).to_sym
+
+    exception = assert_raises ArgumentError do
+      @heap.add_user_properties long_identity, 'key' => 'value'
+    end
+    assert_equal ArgumentError, exception.class
+    assert_equal "Identity field too long; " +
+        '256 is above the 255-character limit', exception.message
   end
 
   def test_add_user_properties_with_long_symbol_property_value
