@@ -1,3 +1,28 @@
+if RUBY_VERSION >= '1.9'  # simplecov only works on MRI 1.9+
+  require 'simplecov'
+  require 'coveralls'
+
+  module SimpleCov::Configuration
+    def clean_filters
+      @filters = []
+    end
+  end
+
+  SimpleCov.configure do
+    clean_filters
+    load_adapter 'test_frameworks'
+  end
+
+  SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+    SimpleCov::Formatter::HTMLFormatter,
+    Coveralls::SimpleCov::Formatter
+  ]
+
+  ENV["COVERAGE"] && SimpleCov.start do
+    add_filter "/.rvm/"
+  end
+end
+
 require 'rubygems'
 require 'bundler'
 begin

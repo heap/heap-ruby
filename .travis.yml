@@ -14,3 +14,4 @@ matrix:
       gemfile: Gemfile
     - rvm: 2.3.0
       gemfile: Gemfile
+      env: COVERAGE=1

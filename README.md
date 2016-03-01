@@ -1,6 +1,8 @@
 # Heap Server-Side API Client for Ruby
 
 [![Build Status](https://travis-ci.org/heap/heap-ruby.svg?branch=master)](https://travis-ci.org/heap/heap-ruby)
+[![Coverage Status](https://coveralls.io/repos/github/heap/heap-ruby/badge.svg?branch=master)](https://coveralls.io/github/heap/heap-ruby?branch=master)
+[![Dependency Status](https://gemnasium.com/heap/heap-ruby.svg)](https://gemnasium.com/heap/heap-ruby)
 [![Yard Docs](http://img.shields.io/badge/yard-docs-blue.svg)](http://rubydoc.info/github/heap/heap-ruby/master/frames)
 [![Gem Version](https://badge.fury.io/rb/heap.svg)](https://badge.fury.io/rb/heap)
 
