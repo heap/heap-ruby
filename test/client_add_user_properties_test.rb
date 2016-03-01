@@ -95,7 +95,6 @@ class ClientAddUserPropertiesTest < MiniTest::Test
         exception.message
   end
 
-
   def test_add_user_properties
     @stubs.post '/api/identify' do |env|
       golden_body = {
@@ -112,6 +111,24 @@ class ClientAddUserPropertiesTest < MiniTest::Test
 
     assert_equal @heap, @heap.add_user_properties('test-identity',
         'foo' => 'bar', :heap => :hurray)
+  end
+
+  def test_add_user_properties_integer_identity
+    identity = 123456789
+    @stubs.post '/api/identify' do |env|
+      golden_body = {
+        'app_id' => 'test-app-id',
+        'identity' => identity.to_s,
+        'properties' => { 'foo' => 'bar' }
+      }
+      assert_equal 'application/json', env[:request_headers]['Content-Type']
+      assert_equal @heap.user_agent, env[:request_headers]['User-Agent']
+      assert_equal golden_body, JSON.parse(env[:body])
+
+      [200, { 'Content-Type' => 'text/plain; encoding=utf8' }, '']
+    end
+
+    assert_equal @heap, @heap.add_user_properties(identity, 'foo' => 'bar')
   end
 
   def test_add_user_properties_error

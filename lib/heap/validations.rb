@@ -29,12 +29,15 @@ class HeapAPI::Client
   # @raise ArgumentError if identity is of an invalid type or too long.
   # @return [HeapAPI::Client] self
   def ensure_valid_identity!(identity)
+    if identity.kind_of?(Integer)
+      identity = identity.to_s
+    end
+
     if identity.kind_of?(String) || identity.kind_of?(Symbol)
       if identity.to_s.length > 255
         raise ArgumentError, "Identity field too long; " +
             "#{identity.to_s.length} is above the 255-character limit"
       end
-    elsif identity.kind_of? Integer
     else
       raise ArgumentError,
         "Unsupported type for identity value #{identity.inspect}"
