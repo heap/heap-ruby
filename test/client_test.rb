@@ -41,13 +41,13 @@ class ClientTest < MiniTest::Test
     @heap.faraday_adapter = :net_http
 
     @heap.stubbed = true
-    assert_equal @heap, @heap.track('test_stubbed_setter', 'test-handle',
+    assert_equal @heap, @heap.track('test_stubbed_setter', 'test-identity',
         'language' => 'ruby', 'project' => 'heap/heap-ruby')
     stubbed_connection = @heap.connection
 
     @heap.stubbed = false
     assert_raises HeapAPI::Error do
-      @heap.track 'test_stubbed_setter', 'test-handle',
+      @heap.track 'test_stubbed_setter', 'test-identity',
           'language' => 'ruby', 'project' => 'heap/heap-ruby'
     end
     live_connection = @heap.connection

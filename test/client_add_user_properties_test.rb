@@ -16,7 +16,7 @@ class ClientAddUserPropertiesTest < MiniTest::Test
   def test_add_user_properties_without_app_id
     @heap.app_id = nil
     exception = assert_raises RuntimeError do
-      @heap.add_user_properties 'test-handle', 'key' => 'value'
+      @heap.add_user_properties 'test-identity', 'key' => 'value'
     end
     assert_equal RuntimeError, exception.class
     assert_equal 'Heap app_id not set', exception.message
@@ -26,7 +26,7 @@ class ClientAddUserPropertiesTest < MiniTest::Test
     long_name = 'A' * 1025
 
     exception = assert_raises ArgumentError do
-      @heap.add_user_properties 'test-handle', long_name => 'value'
+      @heap.add_user_properties 'test-identity', long_name => 'value'
     end
     assert_equal ArgumentError, exception.class
     assert_equal "Property name #{long_name} too long; " +
@@ -36,7 +36,8 @@ class ClientAddUserPropertiesTest < MiniTest::Test
   def test_add_user_properties_with_long_string_property_value
     long_value = 'A' * 1025
     exception = assert_raises ArgumentError do
-      @heap.add_user_properties 'test-handle', 'long_value_name' => long_value
+      @heap.add_user_properties 'test-identity',
+          'long_value_name' => long_value
     end
     assert_equal ArgumentError, exception.class
     assert_equal "Property long_value_name value \"#{long_value}\" too " +
@@ -46,7 +47,8 @@ class ClientAddUserPropertiesTest < MiniTest::Test
   def test_add_user_properties_with_long_symbol_property_value
     long_value = ('A' * 1025).to_sym
     exception = assert_raises ArgumentError do
-      @heap.add_user_properties 'test-handle', 'long_value_name' => long_value
+      @heap.add_user_properties 'test-identity',
+          'long_value_name' => long_value
     end
     assert_equal ArgumentError, exception.class
     assert_equal "Property long_value_name value :#{long_value} too long; " +
@@ -55,7 +57,7 @@ class ClientAddUserPropertiesTest < MiniTest::Test
 
   def test_add_user_properties_with_array_property_value
     exception = assert_raises ArgumentError do
-      @heap.add_user_properties 'test-handle', 'array_value_name' => []
+      @heap.add_user_properties 'test-identity', 'array_value_name' => []
     end
     assert_equal ArgumentError, exception.class
     assert_equal 'Unsupported type for property array_value_name value []',
@@ -67,7 +69,7 @@ class ClientAddUserPropertiesTest < MiniTest::Test
     @stubs.post '/api/identify' do |env|
       golden_body = {
         'app_id' => 'test-app-id',
-        'identity' => 'test-handle',
+        'identity' => 'test-identity',
         'properties' => { 'foo' => 'bar', 'heap' => 'hurray' }
       }
       assert_equal 'application/json', env[:request_headers]['Content-Type']
@@ -77,7 +79,7 @@ class ClientAddUserPropertiesTest < MiniTest::Test
       [200, { 'Content-Type' => 'text/plain; encoding=utf8' }, '']
     end
 
-    assert_equal @heap, @heap.add_user_properties('test-handle',
+    assert_equal @heap, @heap.add_user_properties('test-identity',
         'foo' => 'bar', :heap => :hurray)
   end
 
@@ -87,7 +89,7 @@ class ClientAddUserPropertiesTest < MiniTest::Test
     end
 
     exception = assert_raises HeapAPI::Error do
-      @heap.add_user_properties 'test-handle', 'foo' => 'bar'
+      @heap.add_user_properties 'test-identity', 'foo' => 'bar'
     end
 
     assert_equal HeapAPI::ApiError, exception.class
@@ -101,7 +103,7 @@ class ClientAddUserPropertiesTest < MiniTest::Test
     @heap.faraday_adapter = :net_http
     @heap.faraday_adapter_args = []
 
-    assert_equal @heap, @heap.add_user_properties('test-handle',
+    assert_equal @heap, @heap.add_user_properties('test-identity',
         'language/ruby' => 1, 'heap/heap-ruby' => 1)
   end
 
@@ -110,7 +112,7 @@ class ClientAddUserPropertiesTest < MiniTest::Test
     @heap.faraday_adapter_args = []
 
     assert_raises HeapAPI::Error do
-      @heap.add_user_properties 'test-handle',
+      @heap.add_user_properties 'test-identity',
           'language/ruby' => 1, 'heap/heap-ruby' => 1
     end
   end
@@ -118,7 +120,7 @@ class ClientAddUserPropertiesTest < MiniTest::Test
   def test_add_user_properties_with_stubbed_connection
     @heap.stubbed = true
 
-    assert_equal @heap, @heap.add_user_properties('test-handle',
+    assert_equal @heap, @heap.add_user_properties('test-identity',
         'foo' => 'bar', :heap => :hurray)
   end
 end
