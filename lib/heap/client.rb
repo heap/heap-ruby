@@ -66,7 +66,7 @@ class HeapAPI::Client
   def faraday_adapter_args=(new_args)
     raise RuntimeError, 'Faraday connection already initialized' if @connection
     unless new_args.instance_of? Array
-      raise ArgumentErrorm, "Arguments must be an array"
+      raise ArgumentError, "Arguments must be an Array"
     end
     @faraday_adapter_args = new_args
   end

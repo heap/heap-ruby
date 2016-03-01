@@ -20,6 +20,7 @@ if RUBY_VERSION >= '1.9'  # simplecov only works on MRI 1.9+
 
   ENV["COVERAGE"] && SimpleCov.start do
     add_filter "/.rvm/"
+    add_filter "/.rbenv/"
   end
 end
 

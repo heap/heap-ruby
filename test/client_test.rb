@@ -36,6 +36,14 @@ class ClientTest < MiniTest::Test
     assert_equal [stubs], @heap.faraday_adapter_args
   end
 
+  def test_faraday_adapter_args_setter_with_invalid_value
+    exception = assert_raises ArgumentError do
+      @heap.faraday_adapter_args = false
+    end
+    assert_equal ArgumentError, exception.class
+    assert_equal 'Arguments must be an Array', exception.message
+  end
+
   def test_stubbed_setter
     @heap.app_id = 'test-app-id'
     @heap.faraday_adapter = :net_http

@@ -22,6 +22,15 @@ class ClientAddUserPropertiesTest < MiniTest::Test
     assert_equal 'Heap app_id not set', exception.message
   end
 
+  def test_add_user_properties_with_invalid_property_object
+    exception = assert_raises ArgumentError do
+      @heap.add_user_properties 'test-identity', false
+    end
+    assert_equal ArgumentError, exception.class
+    assert_equal 'Properties object does not implement #each',
+        exception.message
+  end
+
   def test_add_user_properties_with_long_property_name
     long_name = 'A' * 1025
 

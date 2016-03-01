@@ -39,6 +39,15 @@ class ClientTrackTest < MiniTest::Test
     assert_equal 'Event name too long', exception.message
   end
 
+  def test_track_with_invalid_property_object
+    exception = assert_raises ArgumentError do
+      @heap.track 'test_track_with_long_property_name', 'test-identity', false
+    end
+    assert_equal ArgumentError, exception.class
+    assert_equal 'Properties object does not implement #each',
+        exception.message
+  end
+
   def test_track_with_long_property_name
     long_name = 'A' * 1025
     exception = assert_raises ArgumentError do
