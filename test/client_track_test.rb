@@ -39,6 +39,17 @@ class ClientTrackTest < MiniTest::Test
     assert_equal 'Event name too long', exception.message
   end
 
+  def test_add_user_properties_with_long_identity
+    long_identity = 'A' * 256
+
+    exception = assert_raises ArgumentError do
+      @heap.track 'some-event', long_identity
+    end
+    assert_equal ArgumentError, exception.class
+    assert_equal "Identity field too long; " +
+        '256 is above the 255-character limit', exception.message
+  end
+
   def test_track_with_invalid_property_object
     exception = assert_raises ArgumentError do
       @heap.track 'test_track_with_long_property_name', 'test-identity', false
@@ -70,6 +81,17 @@ class ClientTrackTest < MiniTest::Test
         'long; 1025 is above the 1024-character limit', exception.message
   end
 
+  def test_track_with_long_symbol_identity
+    long_identity = ('A' * 256).to_sym
+
+    exception = assert_raises ArgumentError do
+      @heap.track 'some-event', long_identity
+    end
+    assert_equal ArgumentError, exception.class
+    assert_equal "Identity field too long; " +
+        '256 is above the 255-character limit', exception.message
+  end
+
   def test_track_with_long_symbol_property_value
     long_value = ('A' * 1025).to_sym
     exception = assert_raises ArgumentError do
@@ -96,6 +118,25 @@ class ClientTrackTest < MiniTest::Test
     end
 
     assert_equal @heap, @heap.track('test_track', 'test-identity')
+  end
+
+  def test_track_number_identity
+    identity = 123456789
+
+    @stubs.post '/api/track' do |env|
+      golden_body = {
+        'app_id' => 'test-app-id',
+        'identity' => identity.to_s,
+        'event' => 'test_track',
+      }
+      assert_equal 'application/json', env[:request_headers]['Content-Type']
+      assert_equal @heap.user_agent, env[:request_headers]['User-Agent']
+      assert_equal golden_body, JSON.parse(env[:body])
+
+      [200, { 'Content-Type' => 'text/plain; encoding=utf8' }, '']
+    end
+
+    assert_equal @heap, @heap.track('test_track', identity)
   end
 
   def test_track_with_properties
