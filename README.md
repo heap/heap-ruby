@@ -6,7 +6,8 @@
 [![Yard Docs](http://img.shields.io/badge/yard-docs-blue.svg)](http://rubydoc.info/github/heap/heap-ruby/master/frames)
 [![Gem Version](https://badge.fury.io/rb/heap.svg)](https://badge.fury.io/rb/heap)
 
-This is a Ruby client for the [Heap](https://heapanalytics.com/)
+This is a [Ruby](https://www.ruby-lang.org/) client for the
+[Heap](https://heapanalytics.com/)
 [server-side API](https://heapanalytics.com/docs/server-side).
 
 

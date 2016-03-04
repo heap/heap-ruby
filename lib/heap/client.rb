@@ -29,6 +29,7 @@ class HeapAPI::Client
   #
   # @param [Hash<Symbol, Object>] options initial values for attributes
   # @option options [String] app_id the Heap application ID from
+  #   https://heapanalytics.com/app/install
   # @option options [Hash<Symbol, Object>] js_options default heap.js advanced
   #   options
   # @option options [Boolean] stubbed if true, all the requests to the Heap API
@@ -71,7 +72,7 @@ class HeapAPI::Client
     @faraday_adapter_args = new_args
   end
 
-  # Assign custom properties to an existing user.
+  # Assigns custom properties to an existing user.
   #
   # @param [String] identity an e-mail, handle, or Heap-generated user ID
   # @param [Hash<String, String|Number>] properties key-value properties
