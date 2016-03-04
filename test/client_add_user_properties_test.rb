@@ -31,7 +31,7 @@ class ClientAddUserPropertiesTest < MiniTest::Test
         exception.message
   end
 
-  def test_add_user_properties_with_long_identity
+  def test_add_user_properties_with_long_string_identity
     long_identity = 'A' * 256
 
     exception = assert_raises ArgumentError do
@@ -41,6 +41,26 @@ class ClientAddUserPropertiesTest < MiniTest::Test
     assert_equal "Identity field too long; " +
         '256 is above the 255-character limit', exception.message
   end
+
+  def test_add_user_properties_with_long_symbol_identity
+    long_identity = ('A' * 256).to_sym
+
+    exception = assert_raises ArgumentError do
+      @heap.add_user_properties long_identity, 'key' => 'value'
+    end
+    assert_equal ArgumentError, exception.class
+    assert_equal "Identity field too long; " +
+        '256 is above the 255-character limit', exception.message
+  end
+
+  def test_add_user_properties_with_array_identity
+    exception = assert_raises ArgumentError do
+      @heap.add_user_properties([], 'key' => 'value')
+    end
+    assert_equal ArgumentError, exception.class
+    assert_equal 'Unsupported type for identity value []', exception.message
+  end
+
 
   def test_add_user_properties_with_long_property_name
     long_name = 'A' * 1025
@@ -62,17 +82,6 @@ class ClientAddUserPropertiesTest < MiniTest::Test
     assert_equal ArgumentError, exception.class
     assert_equal "Property long_value_name value \"#{long_value}\" too " +
         'long; 1025 is above the 1024-character limit', exception.message
-  end
-
-  def test_add_user_properties_with_long_identity
-    long_identity = ('A' * 256).to_sym
-
-    exception = assert_raises ArgumentError do
-      @heap.add_user_properties long_identity, 'key' => 'value'
-    end
-    assert_equal ArgumentError, exception.class
-    assert_equal "Identity field too long; " +
-        '256 is above the 255-character limit', exception.message
   end
 
   def test_add_user_properties_with_long_symbol_property_value
@@ -113,12 +122,11 @@ class ClientAddUserPropertiesTest < MiniTest::Test
         'foo' => 'bar', :heap => :hurray)
   end
 
-  def test_add_user_properties_integer_identity
-    identity = 123456789
+  def test_add_user_properties_with_integer_identity
     @stubs.post '/api/identify' do |env|
       golden_body = {
         'app_id' => 'test-app-id',
-        'identity' => identity.to_s,
+        'identity' => '123456789',
         'properties' => { 'foo' => 'bar' }
       }
       assert_equal 'application/json', env[:request_headers]['Content-Type']
@@ -128,7 +136,7 @@ class ClientAddUserPropertiesTest < MiniTest::Test
       [200, { 'Content-Type' => 'text/plain; encoding=utf8' }, '']
     end
 
-    assert_equal @heap, @heap.add_user_properties(identity, 'foo' => 'bar')
+    assert_equal @heap, @heap.add_user_properties(123456789, 'foo' => 'bar')
   end
 
   def test_add_user_properties_error

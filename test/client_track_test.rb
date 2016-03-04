@@ -39,7 +39,7 @@ class ClientTrackTest < MiniTest::Test
     assert_equal 'Event name too long', exception.message
   end
 
-  def test_add_user_properties_with_long_identity
+  def test_track_with_long_string_identity
     long_identity = 'A' * 256
 
     exception = assert_raises ArgumentError do
@@ -48,6 +48,25 @@ class ClientTrackTest < MiniTest::Test
     assert_equal ArgumentError, exception.class
     assert_equal "Identity field too long; " +
         '256 is above the 255-character limit', exception.message
+  end
+
+  def test_track_with_long_symbol_identity
+    long_identity = ('A' * 256).to_sym
+
+    exception = assert_raises ArgumentError do
+      @heap.track 'some-event', long_identity
+    end
+    assert_equal ArgumentError, exception.class
+    assert_equal "Identity field too long; " +
+        '256 is above the 255-character limit', exception.message
+  end
+
+  def test_track_with_array_identity
+    exception = assert_raises ArgumentError do
+      @heap.track 'test_track_with_array_property_value', []
+    end
+    assert_equal ArgumentError, exception.class
+    assert_equal 'Unsupported type for identity value []', exception.message
   end
 
   def test_track_with_invalid_property_object
@@ -81,17 +100,6 @@ class ClientTrackTest < MiniTest::Test
         'long; 1025 is above the 1024-character limit', exception.message
   end
 
-  def test_track_with_long_symbol_identity
-    long_identity = ('A' * 256).to_sym
-
-    exception = assert_raises ArgumentError do
-      @heap.track 'some-event', long_identity
-    end
-    assert_equal ArgumentError, exception.class
-    assert_equal "Identity field too long; " +
-        '256 is above the 255-character limit', exception.message
-  end
-
   def test_track_with_long_symbol_property_value
     long_value = ('A' * 1025).to_sym
     exception = assert_raises ArgumentError do
@@ -101,6 +109,16 @@ class ClientTrackTest < MiniTest::Test
     assert_equal ArgumentError, exception.class
     assert_equal "Property long_value_name value :#{long_value} too long; " +
         '1025 is above the 1024-character limit', exception.message
+  end
+
+  def test_track_with_array_property_value
+    exception = assert_raises ArgumentError do
+      @heap.track 'test_track_with_array_property_value', 'test-identity',
+          'array_value_name' => []
+    end
+    assert_equal ArgumentError, exception.class
+    assert_equal 'Unsupported type for property array_value_name value []',
+        exception.message
   end
 
   def test_track
@@ -120,13 +138,11 @@ class ClientTrackTest < MiniTest::Test
     assert_equal @heap, @heap.track('test_track', 'test-identity')
   end
 
-  def test_track_number_identity
-    identity = 123456789
-
+  def test_track_with_integer_identity
     @stubs.post '/api/track' do |env|
       golden_body = {
         'app_id' => 'test-app-id',
-        'identity' => identity.to_s,
+        'identity' => '123456789',
         'event' => 'test_track',
       }
       assert_equal 'application/json', env[:request_headers]['Content-Type']
@@ -136,7 +152,7 @@ class ClientTrackTest < MiniTest::Test
       [200, { 'Content-Type' => 'text/plain; encoding=utf8' }, '']
     end
 
-    assert_equal @heap, @heap.track('test_track', identity)
+    assert_equal @heap, @heap.track('test_track', 123456789)
   end
 
   def test_track_with_properties

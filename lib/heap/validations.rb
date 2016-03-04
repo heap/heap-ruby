@@ -29,9 +29,7 @@ class HeapAPI::Client
   # @raise ArgumentError if identity is of an invalid type or too long.
   # @return [HeapAPI::Client] self
   def ensure_valid_identity!(identity)
-    if identity.kind_of?(Integer)
-      identity = identity.to_s
-    end
+    identity = identity.to_s if identity.kind_of?(Integer)
 
     if identity.kind_of?(String) || identity.kind_of?(Symbol)
       if identity.to_s.length > 255

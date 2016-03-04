@@ -13,9 +13,9 @@ if RUBY_VERSION >= '1.9'  # simplecov only works on MRI 1.9+
     load_adapter 'test_frameworks'
   end
 
-  SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+  SimpleCov.formatters = [
     SimpleCov::Formatter::HTMLFormatter,
-    Coveralls::SimpleCov::Formatter
+    Coveralls::SimpleCov::Formatter,
   ]
 
   ENV["COVERAGE"] && SimpleCov.start do
