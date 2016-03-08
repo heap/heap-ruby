@@ -82,7 +82,7 @@ end
 The properties are optional.
 
 ```ruby
-Heap.track 'user-identity', 'event-name', property: 'value'
+Heap.track 'event-name', 'user-identity', property: 'value'
 ```
 
 [Add properties](https://heapanalytics.com/docs/server-side#identify) to a
