@@ -101,6 +101,26 @@ heap_client.track 'user-identity', 'event-name', property: 'value'
 ```
 
 
+## Development
+
+After cloning the repository, install the required gems.
+
+```bash
+bundle install
+```
+
+Make sure the tests pass after making a change.
+
+```bash
+rake test
+```
+
+If you submit a
+[pull request](https://help.github.com/articles/using-pull-requests/),
+[Travis CI](https://travis-ci.org/) will run the test suite against your code
+on the Ruby VMs that we support. Please fix any errors that it reports.
+
+
 ## Legacy Gem Releases
 
 Gem versions below 1.0 come from
