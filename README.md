@@ -13,7 +13,8 @@ This is a [Ruby](https://www.ruby-lang.org/) client for the
 
 ## Prerequisites
 
-This gem is tested on Ruby 1.8.7 and above.
+This gem is tested on [MRI](https://www.ruby-lang.org/en/downloads/) 1.8.7 and
+above, and on [JRuby](http://jruby.org/) 1.7 and above.
 
 
 ## Installation
