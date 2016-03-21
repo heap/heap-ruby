@@ -20,4 +20,5 @@ group :development do
   gem 'addressable', '~> 2.3.8'
   gem 'git', '~> 1.2.9'
   gem 'highline', '~> 1.6.21'
+  gem 'rake', '~> 10.5'
 end

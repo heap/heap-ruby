@@ -4,13 +4,19 @@ matrix:
   include:
     - rvm: 1.8.7
       gemfile: Gemfile187
+    - rvm: jruby-18mode
+      gemfile: Gemfile187
     - rvm: 1.9.3
+      gemfile: Gemfile
+    - rvm: jruby-19mode
       gemfile: Gemfile
     - rvm: 2.0.0
       gemfile: Gemfile
     - rvm: 2.1.8
       gemfile: Gemfile
     - rvm: 2.2.4
+      gemfile: Gemfile
+    - rvm: jruby-9.0.5.0
       gemfile: Gemfile
     - rvm: 2.3.0
       gemfile: Gemfile
