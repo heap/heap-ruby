@@ -105,7 +105,7 @@ class ClientAddUserPropertiesTest < MiniTest::Test
   end
 
   def test_add_user_properties
-    @stubs.post '/api/identify' do |env|
+    @stubs.post '/api/add_user_properties' do |env|
       golden_body = {
         'app_id' => 'test-app-id',
         'identity' => 'test-identity',
@@ -123,7 +123,7 @@ class ClientAddUserPropertiesTest < MiniTest::Test
   end
 
   def test_add_user_properties_with_integer_identity
-    @stubs.post '/api/identify' do |env|
+    @stubs.post '/api/add_user_properties' do |env|
       golden_body = {
         'app_id' => 'test-app-id',
         'identity' => '123456789',
@@ -140,7 +140,7 @@ class ClientAddUserPropertiesTest < MiniTest::Test
   end
 
   def test_add_user_properties_error
-    @stubs.post '/api/identify' do |env|
+    @stubs.post '/api/add_user_properties' do |env|
       [400, { 'Content-Type' => 'text/plain; encoding=utf8' }, 'Bad request']
     end
 
