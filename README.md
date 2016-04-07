@@ -86,8 +86,8 @@ The properties are optional.
 Heap.track 'event-name', 'user-identity', property: 'value'
 ```
 
-[Add properties](https://heapanalytics.com/docs/server-side#identify) to a
-user.
+[Add properties](https://heapanalytics.com/docs/server-side#add-user-properties)
+to a user.
 
 ```ruby
 Heap.add_user_properties 'user-identity', plan: 'premium1'

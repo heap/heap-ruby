@@ -79,7 +79,7 @@ class HeapAPI::Client
   #   associated with the event; each key must have fewer than 1024 characters;
   #   each value must be a Number or String with fewer than 1024 characters
   # @return [HeapAPI::Client] self
-  # @see https://heapanalytics.com/docs/server-side#identify
+  # @see https://heapanalytics.com/docs/server-side#add-user-properties
   def add_user_properties(identity, properties)
     ensure_valid_app_id!
     ensure_valid_identity! identity
@@ -90,7 +90,7 @@ class HeapAPI::Client
       :identity => identity.to_s,
       :properties => properties,
     }
-    response = connection.post '/api/identify', body,
+    response = connection.post '/api/add_user_properties', body,
         'User-Agent' => user_agent
     raise HeapAPI::ApiError.new(response) unless response.success?
     self
@@ -172,7 +172,7 @@ class HeapAPI::Client
   # @return [Faraday::Connection] a Faraday connection object
   def stubbed_connection!
     stubs = Faraday::Adapter::Test::Stubs.new do |stub|
-      stub.post('/api/identify') { |env| [204, {}, ''] }
+      stub.post('/api/add_user_properties') { |env| [204, {}, ''] }
       stub.post('/api/track') { |env| [204, {}, ''] }
     end
 
