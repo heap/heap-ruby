@@ -98,7 +98,7 @@ application's architecture, create your own client instances.
 
 ```ruby
 heap_client = Heap.new app_id: 'YOUR_APP_ID'
-heap_client.track 'user-identity', 'event-name', property: 'value'
+heap_client.track 'event-name', 'user-identity', property: 'value'
 ```
 
 
