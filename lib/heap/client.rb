@@ -114,8 +114,8 @@ class HeapAPI::Client
 
     body = {
       :app_id => @app_id,
-      :event => event,
       :identity => identity,
+      :event => event
     }
     ensure_valid_properties! properties
     unless properties.nil?
