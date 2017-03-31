@@ -17,6 +17,7 @@ class HeapAPI::Client
   # @raise ArgumentError if the event name is invalid
   # @return [HeapAPI::Client] self
   def ensure_valid_event_name!(event)
+    event = event.to_s
     raise ArgumentError, 'Missing or empty event name' if event.empty?
     raise ArgumentError, 'Event name too long' if event.length > 1024
     self
@@ -29,12 +30,11 @@ class HeapAPI::Client
   # @raise ArgumentError if identity is of an invalid type or too long.
   # @return [HeapAPI::Client] self
   def ensure_valid_identity!(identity)
-    identity = identity.to_s if identity.kind_of?(Integer)
-
-    if identity.kind_of?(String) || identity.kind_of?(Symbol)
-      if identity.to_s.length > 255
         raise ArgumentError, "Identity field too long; " +
             "#{identity.to_s.length} is above the 255-character limit"
+    if identity.kind_of?(Integer) || identity.kind_of?(String) || identity.kind_of?(Symbol)
+      identity = identity.to_s
+      if identity.length > 255
       end
     else
       raise ArgumentError,

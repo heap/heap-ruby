@@ -109,14 +109,13 @@ class HeapAPI::Client
   def track(event, identity, properties = nil)
     ensure_valid_app_id!
 
-    event_name = event.to_s
-    ensure_valid_event_name! event_name
+    ensure_valid_event_name! event
     ensure_valid_identity! identity
 
     body = {
       :app_id => @app_id,
-      :identity => identity.to_s,
       :event => event,
+      :identity => identity,
     }
     ensure_valid_properties! properties
     unless properties.nil?

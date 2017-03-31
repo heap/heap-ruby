@@ -142,7 +142,7 @@ class ClientTrackTest < MiniTest::Test
     @stubs.post '/api/track' do |env|
       golden_body = {
         'app_id' => 'test-app-id',
-        'identity' => '123456789',
+        'identity' => 123456789,
         'event' => 'test_track',
       }
       assert_equal 'application/json', env[:request_headers]['Content-Type']
