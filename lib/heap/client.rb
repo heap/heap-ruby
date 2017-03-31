@@ -118,9 +118,9 @@ class HeapAPI::Client
       :identity => identity.to_s,
       :event => event,
     }
+    ensure_valid_properties! properties
     unless properties.nil?
       body[:properties] = properties
-      ensure_valid_properties! properties
     end
 
     response = connection.post '/api/track', body,
