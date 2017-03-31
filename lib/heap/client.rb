@@ -129,6 +129,32 @@ class HeapAPI::Client
     self
   end
 
+  # Sends a collection of custom events to the Heap API servers.
+  #
+  # @param [Enumerable<Hash<:event=>String,:identity=>String(,:properties=>Hash)>] events a collection that responds to #each,
+  # which will yield Hashes containing the following key-value pairs:
+  #   :event => String the name of the server-side event; limited to 1024 characters
+  #   :identity => String an e-mail, handle, or Heap-generated user ID
+  #   :properties => Hash<String, String|Number> key-value properties
+  #     associated with the event; each key must have fewer than 1024 characters;
+  #     each value must be a Number or String with fewer than 1024 characters
+  # @return [HeapAPI::Client] self
+  # @see https://heapanalytics.com/docs/server-side#bulk-track
+  def bulk_track(events)
+    ensure_valid_app_id!
+
+    events.each do |event_hash|
+      ensure_valid_event_name! event_hash[:event]
+      ensure_valid_identity! event_hash[:identity]
+      ensure_valid_properties! event_hash[:properties]
+    end
+
+    response = connection.post '/api/track', { :app_id => @app_id, :events => events },
+                               'User-Agent' => user_agent
+    raise HeapAPI::ApiError.new(response) unless response.success?
+    self
+  end
+
   # The underlying Faraday connection used to make HTTP requests.
   #
   # @return [Faraday::Connection] a Faraday connection object

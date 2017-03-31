@@ -174,6 +174,43 @@ class ClientTrackTest < MiniTest::Test
         'test-identity','foo' => 'bar', :heap => :hurray)
   end
 
+  def test_bulk_track
+    @stubs.post '/api/track' do |env|
+      golden_body = {
+        'app_id' => 'test-app-id',
+        'events' => [
+          {
+            'identity' => '123456789',
+            'event' => 'test_track'
+          },
+          {
+            'identity' => 'test-identity',
+            'event' => 'test_track_with_properties',
+            'properties' => { 'foo' => 'bar', 'heap' => 'hurray' }
+          }
+        ]
+      }
+      assert_equal 'application/json', env[:request_headers]['Content-Type']
+      assert_equal @heap.user_agent, env[:request_headers]['User-Agent']
+      assert_equal golden_body, JSON.parse(env[:body])
+
+      [200, { 'Content-Type' => 'text/plain; encoding=utf8' }, '']
+    end
+
+    assert_equal @heap, @heap.bulk_track(
+      [
+      {
+        :event => 'test_track',
+        :identity => '123456789',
+      },
+      {
+        :event => 'test_track_with_properties',
+        :identity => 'test-identity',
+        :properties => { 'foo' => 'bar', :heap => :hurray }
+      }
+    ])
+  end
+
   def test_track_error
     @stubs.post '/api/track' do |env|
       [400, { 'Content-Type' => 'text/plain; encoding=utf8' }, 'Bad request']
