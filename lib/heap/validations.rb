@@ -30,11 +30,10 @@ class HeapAPI::Client
   # @raise ArgumentError if identity is of an invalid type or too long.
   # @return [HeapAPI::Client] self
   def ensure_valid_identity!(identity)
-        raise ArgumentError, "Identity field too long; " +
-            "#{identity.to_s.length} is above the 255-character limit"
     if identity.kind_of?(Integer) || identity.kind_of?(String) || identity.kind_of?(Symbol)
       identity = identity.to_s
       if identity.length > 255
+        raise ArgumentError, "Identity field too long; #{identity.length} is above the 255-character limit"
       end
     else
       raise ArgumentError,
@@ -51,21 +50,23 @@ class HeapAPI::Client
   # @raise ArgumentError if the property bag is invalid
   # @return [HeapAPI::Client] self
   def ensure_valid_properties!(properties)
+    return self if properties.nil?
     unless properties.respond_to?(:each)
       raise ArgumentError, 'Properties object does not implement #each'
     end
 
     properties.each do |key, value|
-      if key.to_s.length > 1024
-        raise ArgumentError, "Property name #{key} too long; " +
-            "#{key.to_s.length} is above the 1024-character limit"
+      key_length = key.to_s.length
+      if key_length > 1024
+        raise ArgumentError, "Property name #{key} too long; #{key_length} is above the 1024-character limit"
       end
       if value.kind_of? Numeric
         # TODO(pwnall): Check numerical limits, if necessary.
       elsif value.kind_of?(String) || value.kind_of?(Symbol)
-        if value.to_s.length > 1024
+        value_length = value.to_s.length
+        if value_length > 1024
           raise ArgumentError, "Property #{key} value #{value.inspect} too " +
-              "long; #{value.to_s.length} is above the 1024-character limit"
+              "long; #{value_length} is above the 1024-character limit"
         end
       else
         raise ArgumentError,
