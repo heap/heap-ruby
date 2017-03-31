@@ -6,7 +6,7 @@ class ClientTest < MiniTest::Test
   end
 
   def test_default_app_id
-    assert_equal nil, @heap.app_id
+    assert_nil @heap.app_id
   end
 
   def test_default_stubbed
