@@ -39,6 +39,8 @@ class HeapAPI::Client
       raise ArgumentError,
         "Unsupported type for identity value #{identity.inspect}"
     end
+
+    self
   end
   private :ensure_valid_identity!
 
@@ -73,6 +75,8 @@ class HeapAPI::Client
             "Unsupported type for property #{key} value #{value.inspect}"
       end
     end
+
+    self
   end
   private :ensure_valid_properties!
 end
