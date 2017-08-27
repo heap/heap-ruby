@@ -121,6 +121,18 @@ class ClientTrackTest < MiniTest::Test
         exception.message
   end
 
+  def test_track_with_datetime_timestamp
+    invalid_timestamp = DateTime.now
+
+    exception = assert_raises ArgumentError do
+      @heap.track 'test_track_with_datetime_timestamp', 'test-identity',
+          {}, invalid_timestamp
+    end
+    assert_equal ArgumentError, exception.class
+    assert_equal 'Unsupported timestamp format. Must be iso8601 or unix epoch' +
+    ' milliseconds', exception.message
+  end
+
   def test_track
     @stubs.post '/api/track' do |env|
       golden_body = {
@@ -172,6 +184,26 @@ class ClientTrackTest < MiniTest::Test
 
     assert_equal @heap, @heap.track('test_track_with_properties',
         'test-identity','foo' => 'bar', :heap => :hurray)
+  end
+
+  def test_track_with_timestamp
+    time = DateTime.now.iso8601
+    @stubs.post '/api/track' do |env|
+      golden_body = {
+        'app_id' => 'test-app-id',
+        'identity' => 'test-identity',
+        'event' => 'test_track_with_timestamp',
+        'timestamp' => time
+      }
+      assert_equal 'application/json', env[:request_headers]['Content-Type']
+      assert_equal @heap.user_agent, env[:request_headers]['User-Agent']
+      assert_equal golden_body, JSON.parse(env[:body])
+
+      [200, { 'Content-Type' => 'text/plain; encoding=utf8' }, '']
+    end
+
+    assert_equal @heap, @heap.track('test_track_with_timestamp',
+        'test-identity', nil, time)
   end
 
   def test_track_error

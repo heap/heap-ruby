@@ -106,7 +106,7 @@ class HeapAPI::Client
   #   each value must be a Number or String with fewer than 1024 characters
   # @return [HeapAPI::Client] self
   # @see https://heapanalytics.com/docs/server-side#track
-  def track(event, identity, properties = nil)
+  def track(event, identity, properties = nil, timestamp = nil)
     ensure_valid_app_id!
 
     event_name = event.to_s
@@ -118,6 +118,12 @@ class HeapAPI::Client
       :identity => identity.to_s,
       :event => event,
     }
+
+    unless timestamp.nil?
+      body[:timestamp] = timestamp
+      ensure_valid_timestamp! timestamp
+    end
+
     unless properties.nil?
       body[:properties] = properties
       ensure_valid_properties! properties

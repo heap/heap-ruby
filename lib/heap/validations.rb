@@ -74,4 +74,19 @@ class HeapAPI::Client
     end
   end
   private :ensure_valid_properties!
+
+  def ensure_valid_timestamp!(timestamp)
+    if timestamp.kind_of?(String)
+      Time.iso8601(timestamp)
+    elsif timestamp.kind_of?(Numeric)
+    else
+      raise ArgumentError,
+        "Unsupported timestamp format. Must be iso8601 or unix epoch " +
+        "milliseconds"
+    end
+  rescue ArgumentError
+    raise ArgumentError,
+      "Unsupported timestamp format. Must be iso8601 or unix epoch milliseconds"
+  end
+  private :ensure_valid_timestamp!
 end
