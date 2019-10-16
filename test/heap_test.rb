@@ -2,7 +2,7 @@ require 'helper'
 
 class HeapTest < MiniTest::Test
   def test_heap_app_id
-    assert_equal nil,  Heap.app_id
+    assert_nil Heap.app_id
     begin
       Heap.app_id = 'global-app-id'
       assert_equal 'global-app-id', Heap.app_id
