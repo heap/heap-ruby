@@ -1,4 +1,6 @@
-# Heap Server-Side API Client for Ruby
+_This module is deprecated._
+
+# (DEPRECATED) Heap Server-Side API Client for Ruby
 
 [![Build Status](https://travis-ci.org/heap/heap-ruby.svg?branch=master)](https://travis-ci.org/heap/heap-ruby)
 [![Coverage Status](https://coveralls.io/repos/github/heap/heap-ruby/badge.svg?branch=master)](https://coveralls.io/github/heap/heap-ruby?branch=master)
@@ -10,6 +12,9 @@ This is a [Ruby](https://www.ruby-lang.org/) client for the
 [Heap](https://heapanalytics.com/)
 [server-side API](https://heapanalytics.com/docs/server-side).
 
+## Notice
+
+This client is deprecated and this repo is no longer maintained or supported.
 
 ## Prerequisites
 
