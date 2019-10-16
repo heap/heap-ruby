@@ -121,6 +121,33 @@ class ClientTrackTest < MiniTest::Test
         exception.message
   end
 
+  def test_track_with_non_date_timestamp
+    exception = assert_raises ArgumentError do
+      @heap.track 'test_track_with_array_property_value', 'test-identity', {}, :timestamp => 'foobar'
+    end
+    assert_equal ArgumentError, exception.class
+    assert_equal "Unsupported timestamp format #{"foobar".inspect}. Must be iso8601 or unix epoch milliseconds.",
+        exception.message
+  end
+
+  def test_track_with_array_timestamp
+    exception = assert_raises ArgumentError do
+      @heap.track 'test_track_with_array_property_value', 'test-identity', {}, :timestamp => []
+    end
+    assert_equal ArgumentError, exception.class
+    assert_equal 'Unsupported timestamp format []. Must be iso8601 or unix epoch milliseconds.',
+        exception.message
+  end
+
+  def test_track_with_array_idempotency_key
+    exception = assert_raises ArgumentError do
+      @heap.track 'test_track_with_array_property_value', 'test-identity', {}, :idempotency_key => []
+    end
+    assert_equal ArgumentError, exception.class
+    assert_equal 'Unsupported idempotency key format for []. Must be string or integer',
+        exception.message
+  end
+
   def test_track
     @stubs.post '/api/track' do |env|
       golden_body = {
@@ -172,6 +199,67 @@ class ClientTrackTest < MiniTest::Test
 
     assert_equal @heap, @heap.track('test_track_with_properties',
         'test-identity','foo' => 'bar', :heap => :hurray)
+  end
+
+  def test_track_with_timestamp
+    @stubs.post '/api/track' do |env|
+      golden_body = {
+        'app_id' => 'test-app-id',
+        'identity' => 'test-identity',
+        'event' => 'test_track_with_timestamp',
+        'properties' => {},
+        'timestamp' => '1524038400000'
+      }
+      assert_equal 'application/json', env[:request_headers]['Content-Type']
+      assert_equal @heap.user_agent, env[:request_headers]['User-Agent']
+      assert_equal golden_body, JSON.parse(env[:body])
+
+      [200, { 'Content-Type' => 'text/plain; encoding=utf8' }, '']
+    end
+
+    assert_equal @heap, @heap.track('test_track_with_timestamp',
+      'test-identity', {}, :timestamp => Time.parse("2018-04-18 08:00:00 UTC"))
+  end
+
+  def test_track_with_iso8601_timestamp
+    timestamp = "2018-04-18T22:42:38+03:00"
+    @stubs.post '/api/track' do |env|
+      golden_body = {
+        'app_id' => 'test-app-id',
+        'identity' => 'test-identity',
+        'event' => 'test_track_with_iso8601_timestamp',
+        'properties' => {},
+        'timestamp' => timestamp
+      }
+      assert_equal 'application/json', env[:request_headers]['Content-Type']
+      assert_equal @heap.user_agent, env[:request_headers]['User-Agent']
+      assert_equal golden_body, JSON.parse(env[:body])
+
+      [200, { 'Content-Type' => 'text/plain; encoding=utf8' }, '']
+    end
+
+    assert_equal @heap, @heap.track('test_track_with_iso8601_timestamp',
+      'test-identity', {}, :timestamp => timestamp)
+  end
+
+  def test_track_with_idempotency_key
+    @stubs.post '/api/track' do |env|
+      golden_body = {
+        'app_id' => 'test-app-id',
+        'identity' => 'test-identity',
+        'event' => 'test_track_with_idempotency_key',
+        'properties' => {},
+        'idempotency_key' => 'foobar35214532512'
+      }
+      assert_equal 'application/json', env[:request_headers]['Content-Type']
+      assert_equal @heap.user_agent, env[:request_headers]['User-Agent']
+      assert_equal golden_body, JSON.parse(env[:body])
+
+      [200, { 'Content-Type' => 'text/plain; encoding=utf8' }, '']
+    end
+
+    assert_equal @heap, @heap.track('test_track_with_idempotency_key',
+      'test-identity', {}, :idempotency_key => 'foobar35214532512')
   end
 
   def test_track_error

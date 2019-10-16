@@ -1,4 +1,5 @@
 # Internal methods used to validate API input.
+require 'date'
 
 class HeapAPI::Client
   # Makes sure that the client's app_id property is set.
@@ -43,6 +44,45 @@ class HeapAPI::Client
   end
   private :ensure_valid_identity!
 
+  # Validates timestamp, making sure it's a valid iso8061 timestamp or
+  # number of milliseconds since epoch
+  #
+  # @param [String|Integer|DateTime|Time] timestamp
+  # @raise ArgumentError if timestamp is of an invalid type
+  # @return [String] unix epoch milliseconds or iso8061
+  def ensure_valid_timestamp!(timestamp)
+    if timestamp.kind_of?(Time)
+      timestamp = timestamp.to_datetime
+    end
+    if timestamp.kind_of?(DateTime)
+      timestamp = timestamp.strftime('%Q').to_i
+    end
+    if timestamp.kind_of?(String) && iso8601?(timestamp)
+      timestamp
+    elsif timestamp.kind_of?(Integer)
+      timestamp.to_s
+    else
+      raise ArgumentError,
+        "Unsupported timestamp format #{timestamp.inspect}. " +
+        "Must be iso8601 or unix epoch milliseconds."
+    end
+  end
+  private :ensure_valid_timestamp!
+
+  # Validate idempotency_key, making sure it's a string
+  #
+  # @param [String|Integer] idempotency_key
+  # @raise ArgumentError if identity is of an invalid type or too long.
+  # @return [String] stringified idempotency_key
+  def ensure_valid_idempotency_key!(idempotency_key)
+    unless idempotency_key.kind_of?(String) || idempotency_key.kind_of?(Integer)
+      raise ArgumentError, "Unsupported idempotency key format for " +
+        "#{idempotency_key.inspect}. Must be string or integer"
+    end
+    idempotency_key.to_s
+  end
+  private :ensure_valid_idempotency_key!
+
   # Validates a bag of properties sent to a Heap server-side API.
   #
   # @param [Hash<String, String|Number>] properties key-value property bag;
@@ -74,4 +114,12 @@ class HeapAPI::Client
     end
   end
   private :ensure_valid_properties!
+
+  def iso8601?(string)
+    Time.iso8601(string)
+    true
+  rescue ArgumentError
+    false
+  end
+  private :iso8601?
 end
